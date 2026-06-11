@@ -1,0 +1,21 @@
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="en-GB">
+  <voice name="en-GB-SoniaNeural">
+    <mstts:silence type="Sentenceboundary-exact" value="200ms"/>
+    <mstts:silence type="Tailing-exact" value="0ms"/>
+    <prosody rate="-2%" pitch="-2%">
+      Rachel Okafor has managed the Centrica account for three years. Her company, Apex, provides IT infrastructure services across three Centrica business units, so it really should be a strong strategic partnership.
+      <break time="300ms"/>
+      In practice, though, it's a relationship built on friction. Onboarding took six weeks, and they had to do the whole thing twice — once for Group and once for CES — running the same forms, the same sanctions checks, and the same tax and banking validation from start to finish, twice over. The last major contract was signed four months after it had already expired, and nobody was actually blocking it, it just sat in queues, so for those four months the work carried on under a lapsed agreement while Rachel kept quiet.
+      <break time="300ms"/>
+      Quarterly reviews feel more like audits than conversations, and a three percent volume rebate they agreed eighteen months ago has never once been tracked or claimed.
+      <break time="900ms"/>
+      With the new model, Rachel only has to submit once. The Vendor Registration Agent runs the credential validation, the sanctions screening, and the tax and banking checks all in parallel, and it even catches form errors before they ever reach a human. Within forty-eight hours, Apex's vendor record is live across Group, CES, PH Jones and CBS — one ID, one clean record — so when CES wants to use Apex six months later, there's no second onboarding, just a confirmation and a purchase order.
+      <break time="300ms"/>
+      The contract renewal now lands on Rachel's desk sixty days before expiry, rather than four months after it. The Contracting Agent flagged the expiry ninety days out, drafted the renewal straight from the commercial playbook, and checked the terms against current market rates before Rachel had even seen it.
+      <break time="300ms"/>
+      And the quarterly reviews feel completely different now. Before every meeting, the SRM Agent prepares a live performance pack — delivery against SLA, open purchase orders, contract commitments, and the volume rebate balance, all tracked, calculated and claimed every quarter — so the conversation shifts from last quarter's problems to where the relationship goes next.
+      <break time="300ms"/>
+      She's gone from being a supplier treated as a transaction, to a strategic partner treated with precision.
+    </prosody>
+  </voice>
+</speak>

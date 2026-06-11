@@ -1,0 +1,21 @@
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="en-GB">
+  <voice name="en-GB-SoniaNeural">
+    <mstts:silence type="Sentenceboundary-exact" value="200ms"/>
+    <mstts:silence type="Tailing-exact" value="0ms"/>
+    <prosody rate="-2%" pitch="-2%">
+      Sarah Chen is an Operations Manager at CES, and she needs endpoint security software for fifty laptops. She knows exactly what she wants, she's even got a quote in hand, but she has no real idea how procurement actually works.
+      <break time="300ms"/>
+      So she sends three emails, all to the wrong people, and then she's told her preferred vendor isn't on the approved list and the sourcing queue runs six to eight weeks. So Sarah does what most business managers end up doing, and just raises the purchase order herself — one more maverick transaction that nobody benchmarks and nobody ever checks for value.
+      <break time="300ms"/>
+      And for anything under five thousand pounds, it's the corporate card every single time. The process is meant to help her, but instead it's become something to work around.
+      <break time="900ms"/>
+      With the new model, Sarah simply types what she needs into the portal in plain English — endpoint security software, fifty laptops, around twenty thousand pounds, needed by the end of quarter three.
+      <break time="300ms"/>
+      From there, the Tail-Spend Agent takes over, and within the hour it's benchmarked her request against Centrica's existing frameworks, checked the preferred suppliers, and surfaced three compliant options with market pricing already shown. Sarah picks one, and the purchase order goes out the same day. She never had to know which team to email, and she never needed a procurement contact at all.
+      <break time="300ms"/>
+      And when a need is larger or more strategic, the Category Watcher quietly surfaces it to the right Category Manager before Sarah has committed to anyone, so procurement gets to shape the decision rather than just rubber-stamp it.
+      <break time="300ms"/>
+      The process used to be the problem, and now it's effectively invisible. Sarah buys the right thing, at the right price, through the right channel, and she doesn't have to think about any of it.
+    </prosody>
+  </voice>
+</speak>

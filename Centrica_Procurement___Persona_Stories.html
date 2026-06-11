@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centrica Procurement — Persona Stories</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: ui-sans-serif, -apple-system, "Segoe UI", sans-serif; background: #0F2067; color: #0F2067; }
+
+/* ── LAYOUT ── */
+.stage { position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column; }
+.header { height: 60px; flex-shrink: 0; background: #fff; border-bottom: 1px solid #F6F7FA; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: relative; }
+.header-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: #9B2BF7; transition: width 500ms ease; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark { width: 30px; height: 30px; border-radius: 6px; background: #0F2067; display: flex; align-items: center; justify-content: center; color: #85DB9C; font-weight: bold; font-size: 14px; }
+.brand-title { font-size: 14px; font-weight: bold; color: #0F2067; }
+.brand-sub { font-size: 10px; color: #555; }
+.header-right { display: flex; align-items: center; gap: 14px; }
+.persona-nav { display: flex; gap: 6px; }
+.nav-pip { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #d1d5db; background: #fff; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 200ms; color: #555; }
+.nav-pip.active { background: #9B2BF7; border-color: #9B2BF7; color: #fff; }
+.nav-btn { background: #fff; border: 1px solid #d1d5db; border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: 600; color: #0F2067; cursor: pointer; transition: all 150ms; }
+.nav-btn:hover { background: #0F2067; color: #fff; border-color: #0F2067; }
+
+.canvas { flex: 1; position: relative; overflow: hidden; }
+
+/* ── FOOTER ── */
+.footer { height: 56px; flex-shrink: 0; background: #F6F7FA; border-top: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; gap: 12px; }
+.footer-left { font-size: 10px; color: #9CA3AF; white-space: nowrap; }
+.footer-center { display: flex; align-items: center; gap: 6px; }
+.foot-btn { background: #fff; border: 1px solid #d1d5db; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; color: #0F2067; transition: transform 150ms; flex-shrink: 0; }
+.foot-btn:hover { transform: scale(1.08); }
+.foot-btn.primary { background: #0F2067; color: #fff; border-color: #0F2067; width: 34px; height: 34px; font-size: 14px; }
+.foot-btn.danger { background: #ef4444; border-color: #ef4444; color: #fff; }
+
+/* ── NARRATION CONTROLS ── */
+.narr-controls { display: flex; align-items: center; gap: 8px; }
+.narr-play-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 20px;
+  background: #9B2BF7; color: #fff; border: none;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: background 200ms, transform 150ms;
+  white-space: nowrap;
+}
+.narr-play-btn:hover { background: #7c1fd4; transform: scale(1.02); }
+.narr-play-btn.playing { background: #0F2067; }
+.narr-stop-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #fff; border: 1px solid #d1d5db;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 11px; color: #555;
+  transition: all 150ms;
+}
+.narr-stop-btn:hover { background: #fee2e2; border-color: #ef4444; color: #ef4444; }
+.speed-pills { display: flex; gap: 3px; }
+.speed-pill {
+  padding: 3px 7px; border-radius: 4px; border: 1px solid #d1d5db;
+  background: #fff; font-size: 10px; font-weight: 700; color: #555;
+  cursor: pointer; transition: all 150ms;
+}
+.speed-pill.on { background: #0F2067; color: #fff; border-color: #0F2067; }
+.narr-status {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; color: #9B2BF7; font-weight: 600;
+  min-width: 120px;
+  opacity: 0; transition: opacity 300ms;
+}
+.narr-status.visible { opacity: 1; }
+.narr-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #9B2BF7;
+  animation: narr-pulse 1.1s ease-in-out infinite; flex-shrink: 0;
+}
+@keyframes narr-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.7)} }
+
+/* ── PERSONA SLIDES ── */
+.persona-panel { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 500ms ease; display: flex; }
+.persona-panel.active { opacity: 1; pointer-events: auto; }
+
+/* Speaking highlight */
+.persona-panel.narr-left .p-left   { box-shadow: inset 0 0 0 2px rgba(155,43,247,0.4); transition: box-shadow 400ms; }
+.persona-panel.narr-right .p-right { box-shadow: inset 0 0 0 2px rgba(155,43,247,0.4); transition: box-shadow 400ms; }
+.p-left, .p-right { transition: box-shadow 400ms; }
+
+/* LEFT — TODAY */
+.p-left {
+  flex: 1; background: #F6F7FA; padding: 26px 28px 18px 28px;
+  display: flex; flex-direction: column; gap: 13px; overflow: hidden;
+  position: relative;
+}
+.p-kicker { font-size: 10px; font-weight: bold; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 2px; }
+.p-kicker.today { color: #9CA3AF; }
+.p-kicker.new { color: #9B2BF7; }
+.p-persona-name { font-size: 20px; font-weight: bold; color: #555; line-height: 1.15; }
+.p-persona-role { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+
+.tasks-list { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.task-row { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; opacity: 0; transition: opacity 400ms; }
+.task-row.before { color: #6b7280; }
+.task-row.before span { text-decoration: line-through; color: #9CA3AF; }
+.task-dot { width: 6px; height: 6px; border-radius: 50%; background: #9CA3AF; flex-shrink: 0; margin-top: 4px; }
+
+.quote-card { background: #0F2067; color: #fff; border-radius: 10px; padding: 14px 16px; }
+.quote-tag { font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; color: #85DB9C; margin-bottom: 6px; }
+.quote-text { font-size: 13px; font-style: italic; line-height: 1.45; margin-bottom: 6px; }
+.quote-attr { font-size: 10px; color: #85DB9C; }
+
+/* PIVOT */
+.p-pivot { width: 60px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fff; }
+.pivot-line { width: 1px; flex: 1; background: #e5e7eb; }
+.pivot-circle { width: 42px; height: 42px; border-radius: 50%; background: #9B2BF7; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; box-shadow: 0 0 20px rgba(155,43,247,0.4); transform: scale(0); opacity: 0; transition: transform 600ms ease, opacity 600ms ease; }
+.pivot-circle.shown { transform: scale(1); opacity: 1; }
+
+/* RIGHT — NEW MODEL */
+.p-right {
+  flex: 1; padding: 26px 28px 18px 28px;
+  background: linear-gradient(135deg, rgba(222,207,255,0.18) 0%, #fff 70%);
+  display: flex; flex-direction: column; gap: 13px; overflow: hidden;
+  position: relative;
+}
+.p-persona-name.new { color: #0F2067; }
+
+.after-list { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+.after-row { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; font-weight: 500; color: #0F2067; opacity: 0; transition: opacity 400ms; }
+.after-check { color: #28B23E; font-size: 13px; flex-shrink: 0; }
+
+.agents-row { display: flex; flex-wrap: wrap; gap: 5px; }
+.a-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px 3px 4px; border-radius: 999px; font-size: 10px; font-weight: 600; color: #fff; }
+.a-pill-icon { width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 10px; }
+
+.takeaway-box { background: #0F2067; color: #fff; border-radius: 10px; padding: 14px 16px; opacity: 0; transform: translateY(12px); transition: opacity 600ms ease, transform 600ms ease; }
+.takeaway-box.shown { opacity: 1; transform: translateY(0); }
+.takeaway-kicker { font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; color: #85DB9C; margin-bottom: 5px; }
+.takeaway-text { font-size: 13px; font-weight: 600; line-height: 1.4; }
+
+.impact-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.impact-chip { background: rgba(155,43,247,0.08); border: 1px solid rgba(155,43,247,0.25); border-radius: 8px; padding: 6px 12px; }
+.impact-chip-num { font-size: 18px; font-weight: bold; color: #9B2BF7; line-height: 1; }
+.impact-chip-label { font-size: 9px; color: #555; margin-top: 2px; }
+
+.section-label { font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.12em; color: #9CA3AF; margin-bottom: 3px; }
+.narrative { font-size: 12px; line-height: 1.55; }
+.narrative.today { color: #555; }
+.narrative.new { color: #0F2067; }
+.narrative strong { font-weight: 700; }
+.narrative em { font-style: italic; }
+
+/* Corner logos */
+.logos-corner { position: absolute; bottom: 66px; left: 16px; z-index: 20; display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.97); padding: 6px 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); pointer-events: none; }
+
+/* Voice selector */
+.voice-select { font-size: 10px; border: 1px solid #d1d5db; border-radius: 4px; padding: 3px 6px; color: #555; background: #fff; max-width: 160px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-mark">✦</div>
+      <div>
+        <div class="brand-title">Centrica Procurement</div>
+        <div class="brand-sub">The Human Story · Persona Stories</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="persona-nav" id="personaNav">
+        <div class="nav-pip active" data-idx="0" title="BU Employee">1</div>
+        <div class="nav-pip" data-idx="1" title="Category Manager">2</div>
+        <div class="nav-pip" data-idx="2" title="Supplier">3</div>
+      </div>
+      <button class="nav-btn" id="prevBtn">← Prev</button>
+      <button class="nav-btn" id="nextBtn">Next →</button>
+    </div>
+    <div class="header-progress" id="headerProgress" style="width:33%"></div>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas" id="canvas">
+
+    <!-- ══ PERSONA 1: BU EMPLOYEE ══ -->
+    <div class="persona-panel active" id="p0">
+      <div class="p-left">
+        <div>
+          <div class="p-kicker today">Today · BU Employee</div>
+          <div class="p-persona-name">Sarah Chen</div>
+          <div class="p-persona-role">Operations Manager, CES Business Unit</div>
+        </div>
+        <div>
+          <div class="section-label">How a business need becomes maverick spend</div>
+          <p class="narrative today">
+            Sarah needs endpoint security software for fifty laptops. She knows what she wants. She has a quote. What she doesn't have is any idea how procurement works.
+            Three emails later — all to the wrong people — she's told her preferred vendor isn't on the approved list and the queue is <strong>six to eight weeks.</strong>
+            So she raises the PO direct. One more maverick transaction. Nobody benchmarks it.
+          </p>
+        </div>
+        <div>
+          <div class="section-label">Her week, honestly</div>
+          <div class="tasks-list" id="bu-before">
+            <div class="task-row before"><div class="task-dot"></div><span>Three emails to find the right procurement contact</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>Preferred vendor not on the approved supplier list</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>Six-to-eight week sourcing queue for a £20k purchase</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>PO raised direct to preferred vendor — maverick spend no-one tracks</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>Corporate card for anything under five thousand — every time</span></div>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-tag">What she tells us</div>
+          <div class="quote-text">"By the time the business comes to me, they've already chosen the supplier."</div>
+          <div class="quote-attr">— Category Manager, Group Functions</div>
+        </div>
+      </div>
+      <div class="p-pivot">
+        <div class="pivot-line"></div>
+        <div class="pivot-circle" id="pivot0">✦</div>
+        <div class="pivot-line"></div>
+      </div>
+      <div class="p-right">
+        <div>
+          <div class="p-kicker new">With the new model · BU Employee</div>
+          <div class="p-persona-name new">Sarah Chen</div>
+          <div class="p-persona-role">Operations Manager, CES Business Unit</div>
+        </div>
+        <div>
+          <div class="section-label">Plain English in. Compliant purchase out.</div>
+          <p class="narrative new">
+            Sarah types her need into the portal: <em>"Endpoint security software, fifty laptops, around twenty thousand pounds, end of Q3."</em>
+            The <strong>Tail-Spend Agent</strong> benchmarks against existing frameworks, checks preferred suppliers, and surfaces three compliant options — with market pricing — within the hour.
+            She picks one. A PO is raised the same day. She never needed to know which team to email.
+          </p>
+        </div>
+        <div>
+          <div class="section-label">Agents working for her</div>
+          <div class="agents-row">
+            <span class="a-pill" style="background:#28B23E"><span class="a-pill-icon">🛒</span>Tail-Spend Agent</span>
+            <span class="a-pill" style="background:#0F2067"><span class="a-pill-icon">👁</span>Category Watcher</span>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">What changes</div>
+          <div class="after-list" id="bu-after">
+            <div class="after-row"><span class="after-check">✓</span><span>One plain-English request replaces four emails and two weeks of confusion</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>The right channel chosen automatically — she doesn't need to know the process</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>Market-benchmarked, policy-compliant purchasing without the friction</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>Category Watcher surfaces larger needs to the CM before she commits to a supplier</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>Maverick spend disappears — on-system is now faster than working around it</span></div>
+          </div>
+        </div>
+        <div class="impact-chips">
+          <div class="impact-chip"><div class="impact-chip-num">38K</div><div class="impact-chip-label">PO bottleneck removed</div></div>
+          <div class="impact-chip"><div class="impact-chip-num">Same day</div><div class="impact-chip-label">From request to PO</div></div>
+          <div class="impact-chip"><div class="impact-chip-num">0</div><div class="impact-chip-label">CM time on £2k deals</div></div>
+        </div>
+        <div class="takeaway-box" id="tb0">
+          <div class="takeaway-kicker">The shift</div>
+          <div class="takeaway-text">The process used to be the problem. Now it's invisible. Sarah buys the right thing, at the right price, through the right channel — and doesn't have to think about any of it.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PERSONA 2: CATEGORY MANAGER ══ -->
+    <div class="persona-panel" id="p1">
+      <div class="p-left">
+        <div>
+          <div class="p-kicker today">Today · Category Manager</div>
+          <div class="p-persona-name">Marcus Webb</div>
+          <div class="p-persona-role">Category Manager — Professional Services, Group Functions</div>
+        </div>
+        <div>
+          <div class="section-label">Strategic title. Operational reality.</div>
+          <p class="narrative today">
+            Marcus manages <strong>£85m of spend</strong> across 180 suppliers. Monday to Wednesday he's doing work that has no strategic value: transferring bid data cell by cell, opening nine browser tabs to prep one negotiation, redlining an NDA on a £45k deal.
+            He has eighty negotiations this year. He can properly prepare for <strong>maybe fifteen.</strong>
+          </p>
+        </div>
+        <div>
+          <div class="section-label">A week in his diary</div>
+          <div class="tasks-list" id="cm-before">
+            <div class="task-row before"><div class="task-dot"></div><span>Eight bid responses in four file formats — manually transferred to a scoring matrix</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>Nine browser tabs open just to prep one negotiation</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>Redlining an NDA on a £45k deal — two weeks added to onboarding</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>QBR deck built from scratch — same data, same format, every quarter</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>Five percent volume rebate in the 2022 contract — never claimed</span></div>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-tag">What he tells us</div>
+          <div class="quote-text">"I have eighty negotiations a year. I can prepare properly for maybe fifteen."</div>
+          <div class="quote-attr">— Category Manager, Direct Materials</div>
+        </div>
+      </div>
+      <div class="p-pivot">
+        <div class="pivot-line"></div>
+        <div class="pivot-circle" id="pivot1">✦</div>
+        <div class="pivot-line"></div>
+      </div>
+      <div class="p-right">
+        <div>
+          <div class="p-kicker new">With the new model · Category Manager</div>
+          <div class="p-persona-name new">Marcus Webb</div>
+          <div class="p-persona-role">Category Manager — Professional Services, Group Functions</div>
+        </div>
+        <div>
+          <div class="section-label">Monday morning looks different now</div>
+          <p class="narrative new">
+            A five-minute read. The <strong>Category Watcher</strong> brief is on his screen: two pricing alerts, a contract flagged for re-tender, one supplier showing early financial stress.
+            The RFx for a £12m renewal was drafted overnight. Marcus reviews, makes three adjustments, and it's live in Ariba by half past nine.
+            What used to take three days takes one morning.
+          </p>
+        </div>
+        <div>
+          <div class="section-label">Agents in his corner</div>
+          <div class="agents-row">
+            <span class="a-pill" style="background:#0F2067"><span class="a-pill-icon">👁</span>Category Watcher</span>
+            <span class="a-pill" style="background:#B999F6;color:#0F2067"><span class="a-pill-icon" style="background:rgba(0,0,0,0.12)">📊</span>RFx Assistant</span>
+            <span class="a-pill" style="background:#85DB9C;color:#0F2067"><span class="a-pill-icon" style="background:rgba(0,0,0,0.1)">🤝</span>Negotiation Buddy</span>
+            <span class="a-pill" style="background:#9B2BF7"><span class="a-pill-icon">📝</span>Contracting Agent</span>
+            <span class="a-pill" style="background:#9B2BF7"><span class="a-pill-icon">📈</span>SRM Agent</span>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">What changes</div>
+          <div class="after-list" id="cm-after">
+            <div class="after-row"><span class="after-check">✓</span><span>RFx drafted overnight — live in Ariba by 9:30am, not three days later</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>Every bid normalised; defensible first-pass score before he opens a single document</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>Negotiation brief in 15 minutes: supplier history, market index, behavioural profile, walk-away price</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>NDAs executed zero-touch; legal touches only the exceptions</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>Volume rebate tracked automatically — claimed quarterly, every quarter</span></div>
+          </div>
+        </div>
+        <div class="impact-chips">
+          <div class="impact-chip"><div class="impact-chip-num">80→20%</div><div class="impact-chip-label">Admin time</div></div>
+          <div class="impact-chip"><div class="impact-chip-num">+1–3%</div><div class="impact-chip-label">EBITDA per negotiation</div></div>
+          <div class="impact-chip"><div class="impact-chip-num">–80%</div><div class="impact-chip-label">RFx prep time</div></div>
+        </div>
+        <div class="takeaway-box" id="tb1">
+          <div class="takeaway-kicker">The shift</div>
+          <div class="takeaway-text">From prepping fifteen negotiations properly to being genuinely ready for eighty. The agents run the process. Marcus drives the value.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PERSONA 3: SUPPLIER ══ -->
+    <div class="persona-panel" id="p2">
+      <div class="p-left">
+        <div>
+          <div class="p-kicker today">Today · Supplier</div>
+          <div class="p-persona-name">Rachel Okafor</div>
+          <div class="p-persona-role">Head of Sales UK, Apex Technology Solutions</div>
+        </div>
+        <div>
+          <div class="section-label">A relationship built on friction</div>
+          <p class="narrative today">
+            Rachel has managed the Centrica account for three years. Apex provides IT infrastructure services across three business units.
+            It should be a strong strategic partnership. Instead it's defined by duplicated onboarding, contracts signed
+            <strong>four months after they expire</strong>, and quarterly reviews that feel like audits — not conversations.
+          </p>
+        </div>
+        <div>
+          <div class="section-label">What she experiences</div>
+          <div class="tasks-list" id="sup-before">
+            <div class="task-row before"><div class="task-dot"></div><span>Six weeks to complete onboarding — same forms, same checks, run twice across entities</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>Contract signed four months after expiry — work continued on a lapsed agreement</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>QBRs built from Centrica's own invoice data — no forward agenda, no strategic conversation</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>Three percent volume rebate agreed eighteen months ago — never tracked, never claimed</span></div>
+            <div class="task-row before"><div class="task-dot"></div><span>Separate supplier IDs across Group, CES, PH Jones — one company, four records</span></div>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-tag">What we hear</div>
+          <div class="quote-text">"We just onboarded this supplier in Group. Tomorrow I'll onboard them again in CES."</div>
+          <div class="quote-attr">— Jasmine, Vendor Governance</div>
+        </div>
+      </div>
+      <div class="p-pivot">
+        <div class="pivot-line"></div>
+        <div class="pivot-circle" id="pivot2">✦</div>
+        <div class="pivot-line"></div>
+      </div>
+      <div class="p-right">
+        <div>
+          <div class="p-kicker new">With the new model · Supplier</div>
+          <div class="p-persona-name new">Rachel Okafor</div>
+          <div class="p-persona-role">Head of Sales UK, Apex Technology Solutions</div>
+        </div>
+        <div>
+          <div class="section-label">One submission. Recognised everywhere.</div>
+          <p class="narrative new">
+            Rachel submits once. The <strong>Vendor Registration Agent</strong> runs credential validation, sanctions, tax and banking checks in parallel — catching form errors before they reach a human.
+            Apex's vendor record is live across Group, CES, PH Jones and CBS in <strong>forty-eight hours.</strong>
+            One ID. One clean record. When CES wants to use Apex six months later, there's no second onboarding. There's a confirmation and a PO.
+          </p>
+        </div>
+        <div>
+          <div class="section-label">Agents working on the relationship</div>
+          <div class="agents-row">
+            <span class="a-pill" style="background:#3675C1"><span class="a-pill-icon">👤</span>Vendor Registration</span>
+            <span class="a-pill" style="background:#9B2BF7"><span class="a-pill-icon">📝</span>Contracting Agent</span>
+            <span class="a-pill" style="background:#9B2BF7"><span class="a-pill-icon">📈</span>SRM Agent</span>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">What changes</div>
+          <div class="after-list" id="sup-after">
+            <div class="after-row"><span class="after-check">✓</span><span>One submission. One ID. Recognised across the entire Group in forty-eight hours.</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>Contract renewal lands on Rachel's desk sixty days before expiry — not four months after</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>SRM Agent prepares a live QBR pack: delivery, open POs, contract commitments, rebate balance</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>Volume rebate tracked, calculated, and claimed every quarter — automatically</span></div>
+            <div class="after-row"><span class="after-check">✓</span><span>QBRs become strategic conversations — Centrica arrives knowing more than the audit trail</span></div>
+          </div>
+        </div>
+        <div class="impact-chips">
+          <div class="impact-chip"><div class="impact-chip-num">48 hrs</div><div class="impact-chip-label">Vendor registered &amp; ready</div></div>
+          <div class="impact-chip"><div class="impact-chip-num">1–2%</div><div class="impact-chip-label">Spend recovered via SRM</div></div>
+          <div class="impact-chip"><div class="impact-chip-num">&lt;5%</div><div class="impact-chip-label">Rejection rate (from 30%)</div></div>
+        </div>
+        <div class="takeaway-box" id="tb2">
+          <div class="takeaway-kicker">The shift</div>
+          <div class="takeaway-text">From a supplier treated as a transaction to a strategic partner treated with precision. Centrica now has the data to act like a partner — so the relationship can finally grow like one.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /canvas -->
+
+  <!-- CORNER LOGOS -->
+  <div class="logos-corner">
+    <svg width="80" height="18" viewBox="0 0 200 40"><text x="0" y="32" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-style="italic" font-size="34" fill="#1A2B6B" letter-spacing="-1">centrica</text></svg>
+    <div style="width:1px;height:16px;background:#d1d5db"></div>
+    <svg width="90" height="18" viewBox="0 0 230 50"><polygon points="167,4 184,15 175,18 170,22" fill="#A100FF"/><text x="0" y="46" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="44" fill="#000" letter-spacing="-1">accenture</text></svg>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left" id="footerLabel">Persona 1 of 3 — BU Employee</div>
+
+    <!-- Narration controls -->
+    <div class="narr-controls">
+      <button class="narr-play-btn" id="narrPlay">▶ &nbsp;Narrate</button>
+      <button class="narr-stop-btn" id="narrStop" title="Stop narration">⏹</button>
+      <div class="speed-pills" id="speedPills">
+        <button class="speed-pill" data-rate="0.75">0.75×</button>
+        <button class="speed-pill on"  data-rate="1">1×</button>
+        <button class="speed-pill" data-rate="1.25">1.25×</button>
+        <button class="speed-pill" data-rate="1.5">1.5×</button>
+      </div>
+      <div class="narr-status" id="narrStatus">
+        <div class="narr-dot"></div>
+        <span id="narrStatusText">Speaking…</span>
+      </div>
+    </div>
+
+    <!-- Nav controls -->
+    <div style="display:flex;align-items:center;gap:6px">
+      <button class="foot-btn" id="fb-prev" title="Previous">⏮</button>
+      <button class="foot-btn primary" id="fb-next" title="Next">⏭</button>
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  NARRATION SCRIPTS  — same punchy present-tense voice
+// ═══════════════════════════════════════════════════════
+const NARRATIONS = [
+  {
+    // ── PERSONA 1: BU EMPLOYEE ──
+    left: `Sarah Chen is an Operations Manager at CES, and she needs endpoint security software for fifty laptops. She knows exactly what she wants, she's even got a quote in hand, but she has no real idea how procurement actually works.
+
+So she sends three emails, all to the wrong people, and then she's told her preferred vendor isn't on the approved list and the sourcing queue runs six to eight weeks. So Sarah does what most business managers end up doing, and just raises the purchase order herself — one more maverick transaction that nobody benchmarks and nobody ever checks for value.
+
+And for anything under five thousand pounds, it's the corporate card every single time. The process is meant to help her, but instead it's become something to work around.`,
+
+    right: `With the new model, Sarah simply types what she needs into the portal in plain English — endpoint security software, fifty laptops, around twenty thousand pounds, needed by the end of quarter three.
+
+From there, the Tail-Spend Agent takes over, and within the hour it's benchmarked her request against Centrica's existing frameworks, checked the preferred suppliers, and surfaced three compliant options with market pricing already shown. Sarah picks one, and the purchase order goes out the same day. She never had to know which team to email, and she never needed a procurement contact at all.
+
+And when a need is larger or more strategic, the Category Watcher quietly surfaces it to the right Category Manager before Sarah has committed to anyone, so procurement gets to shape the decision rather than just rubber-stamp it.
+
+The process used to be the problem, and now it's effectively invisible. Sarah buys the right thing, at the right price, through the right channel, and she doesn't have to think about any of it.`
+  },
+  {
+    // ── PERSONA 2: CATEGORY MANAGER ──
+    left: `Marcus Webb manages eighty-five million pounds of annual spend across a hundred and eighty suppliers. On paper it's a strategic role, but his week tells a very different story.
+
+From Monday through to Wednesday he's copying bid data cell by cell out of eight different file formats into a scoring matrix he built three years ago, and he's opening nine browser tabs just to prepare for a single negotiation. He's even redlining an NDA on a forty-five thousand pound deal, which costs more in legal time than the risk it covers and adds two weeks to an already slow onboarding.
+
+He's got eighty negotiations scheduled this year, and he can properly prepare for maybe fifteen of them. And as for that volume rebate buried in the twenty-twenty-two contract, he's fairly sure Centrica has never actually claimed it.`,
+
+    right: `With the new model, Monday morning is just a five-minute read. The Category Watcher brief is already waiting on his screen, with two pricing alerts, a contract flagged for re-tender rather than an automatic renewal, and a supplier showing early signs of financial stress.
+
+The RFx for a twelve million pound professional services renewal was drafted overnight, so Marcus reviews it, makes three adjustments, and it's live in Ariba by half past nine — what used to take three days now takes a single morning.
+
+When the bids come back, every submission, whatever its format, is normalised into one evaluation matrix by the RFx Assistant, with a defensible first-pass score already in place, so Marcus goes straight to evaluation and SME review time drops by seventy to eighty percent.
+
+And for his next negotiation, the Negotiation Buddy already has the brief ready — three years of the supplier's pricing movements, two live market benchmarks, a behavioural profile from past negotiations showing they always anchor high and move on day two, and a recommended walk-away price. Marcus reads it in fifteen minutes, and walks in better prepared than he's ever been.
+
+And that volume rebate? The SRM Agent has been tracking it all year, and now it's claimed automatically, every quarter.
+
+So Marcus goes from properly prepping fifteen negotiations to being genuinely ready for all eighty. The agents run the process, and Marcus drives the value.`
+  },
+  {
+    // ── PERSONA 3: SUPPLIER ──
+    left: `Rachel Okafor has managed the Centrica account for three years. Her company, Apex, provides IT infrastructure services across three Centrica business units, so it really should be a strong strategic partnership.
+
+In practice, though, it's a relationship built on friction. Onboarding took six weeks, and they had to do the whole thing twice — once for Group and once for CES — running the same forms, the same sanctions checks, and the same tax and banking validation from start to finish, twice over. The last major contract was signed four months after it had already expired, and nobody was actually blocking it, it just sat in queues, so for those four months the work carried on under a lapsed agreement while Rachel kept quiet.
+
+Quarterly reviews feel more like audits than conversations, and a three percent volume rebate they agreed eighteen months ago has never once been tracked or claimed.`,
+
+    right: `With the new model, Rachel only has to submit once. The Vendor Registration Agent runs the credential validation, the sanctions screening, and the tax and banking checks all in parallel, and it even catches form errors before they ever reach a human. Within forty-eight hours, Apex's vendor record is live across Group, CES, PH Jones and CBS — one ID, one clean record — so when CES wants to use Apex six months later, there's no second onboarding, just a confirmation and a purchase order.
+
+The contract renewal now lands on Rachel's desk sixty days before expiry, rather than four months after it. The Contracting Agent flagged the expiry ninety days out, drafted the renewal straight from the commercial playbook, and checked the terms against current market rates before Rachel had even seen it.
+
+And the quarterly reviews feel completely different now. Before every meeting, the SRM Agent prepares a live performance pack — delivery against SLA, open purchase orders, contract commitments, and the volume rebate balance, all tracked, calculated and claimed every quarter — so the conversation shifts from last quarter's problems to where the relationship goes next.
+
+She's gone from being a supplier treated as a transaction, to a strategic partner treated with precision.`
+  }
+];
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const PERSONAS = [
+  'Persona 1 of 3 — BU Employee — Sarah Chen',
+  'Persona 2 of 3 — Category Manager — Marcus Webb',
+  'Persona 3 of 3 — Supplier — Rachel Okafor',
+];
+const PROGRESS = [33, 66, 100];
+
+let current = 0;
+let narrating = false;
+let narrRate = 1.0;
+let selectedVoice = null;
+let pendingTimeout = null;
+
+// ═══════════════════════════════════════════════════════
+//  VOICE SELECTION
+// ═══════════════════════════════════════════════════════
+function pickVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  // Pinned to Sonia (UK English). Fallbacks stay UK-accented where possible.
+  const priority = [
+    'Microsoft Sonia Online (Natural) - English (United Kingdom)',
+    'Microsoft Libby Online (Natural) - English (United Kingdom)',
+    'Microsoft Sonia - English (United Kingdom)',
+    'Google UK English Female',
+  ];
+  for (const name of priority) {
+    const v = voices.find(v => v.name === name);
+    if (v) return v;
+  }
+  return voices.find(v => v.name && v.name.includes('Sonia')) ||
+         voices.find(v => v.lang === 'en-GB') ||
+         voices.find(v => v.lang && v.lang.startsWith('en')) ||
+         voices[0] || null;
+}
+
+window.speechSynthesis.onvoiceschanged = () => { selectedVoice = pickVoice(); };
+setTimeout(() => { selectedVoice = pickVoice(); }, 200);
+
+// ═══════════════════════════════════════════════════════
+//  SPEECH ENGINE
+// ═══════════════════════════════════════════════════════
+function stopSpeech() {
+  window.speechSynthesis.cancel();
+  if (pendingTimeout) { clearTimeout(pendingTimeout); pendingTimeout = null; }
+  narrating = false;
+  setNarrUI(false, '');
+  document.querySelectorAll('.persona-panel').forEach(p => {
+    p.classList.remove('narr-left', 'narr-right');
+  });
+}
+
+function speakChunk(text, onEnd) {
+  // Speak whole paragraphs as single utterances so the voice flows naturally
+  // (per-sentence utterances insert an audible gap at every full stop).
+  const sentences = text.split(/\n\s*\n/).map(s => s.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  let idx = 0;
+
+  function next() {
+    if (idx >= sentences.length || !narrating) { onEnd && onEnd(); return; }
+    const utt = new SpeechSynthesisUtterance(sentences[idx].trim());
+    if (selectedVoice) utt.voice = selectedVoice;
+    utt.rate  = narrRate;
+    utt.pitch = 0.95;
+    utt.volume = 1.0;
+    utt.onend   = () => { idx++; next(); };
+    utt.onerror = () => { idx++; next(); };
+    window.speechSynthesis.speak(utt);
+    idx++;
+  }
+
+  // Chrome workaround: keepalive to prevent synthesis stalling on long texts
+  const keepAlive = setInterval(() => {
+    if (!narrating) { clearInterval(keepAlive); return; }
+    window.speechSynthesis.pause();
+    window.speechSynthesis.resume();
+  }, 12000);
+
+  utt_cleanup = () => clearInterval(keepAlive);
+  next();
+}
+let utt_cleanup = null;
+
+function narratePersona(idx) {
+  stopSpeech();
+  narrating = true;
+  const panel = document.getElementById('p' + idx);
+  const n = NARRATIONS[idx];
+
+  setNarrUI(true, 'Today');
+  panel.classList.add('narr-left');
+
+  speakChunk(n.left, () => {
+    if (!narrating) return;
+    panel.classList.remove('narr-left');
+
+    // Pause between left and right
+    pendingTimeout = setTimeout(() => {
+      if (!narrating) return;
+      setNarrUI(true, 'New model');
+      panel.classList.add('narr-right');
+
+      speakChunk(n.right, () => {
+        panel.classList.remove('narr-right');
+        narrating = false;
+        setNarrUI(false, '');
+        document.getElementById('narrPlay').textContent = '▶  Narrate';
+        document.getElementById('narrPlay').classList.remove('playing');
+      });
+    }, 900);
+  });
+}
+
+function setNarrUI(on, label) {
+  const btn    = document.getElementById('narrPlay');
+  const status = document.getElementById('narrStatus');
+  const txt    = document.getElementById('narrStatusText');
+
+  if (on) {
+    btn.textContent = '⏸  Pause';
+    btn.classList.add('playing');
+    status.classList.add('visible');
+    txt.textContent = 'Speaking: ' + label;
+  } else {
+    btn.textContent = '▶  Narrate';
+    btn.classList.remove('playing');
+    status.classList.remove('visible');
+    txt.textContent = '';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════
+function goTo(idx) {
+  stopSpeech();
+
+  document.getElementById('p' + current).classList.remove('active');
+  document.getElementById('pivot' + current).classList.remove('shown');
+  document.getElementById('tb' + current).classList.remove('shown');
+
+  current = ((idx % 3) + 3) % 3;
+
+  const panel = document.getElementById('p' + current);
+  panel.classList.add('active');
+  panel.querySelectorAll('.task-row, .after-row').forEach(el => { el.style.opacity = '0'; });
+
+  animatePanel(current);
+
+  document.querySelectorAll('.nav-pip').forEach((pip, i) => pip.classList.toggle('active', i === current));
+  document.getElementById('headerProgress').style.width = PROGRESS[current] + '%';
+  document.getElementById('footerLabel').textContent = PERSONAS[current];
+}
+
+function animatePanel(idx) {
+  const panel = document.getElementById('p' + idx);
+  const beforeRows = panel.querySelectorAll('.task-row.before');
+  const afterRows  = panel.querySelectorAll('.after-row');
+
+  beforeRows.forEach((el, i) => {
+    setTimeout(() => { el.style.transition = 'opacity 400ms'; el.style.opacity = '0.85'; }, 300 + i * 70);
+  });
+  setTimeout(() => {
+    document.getElementById('pivot' + idx).classList.add('shown');
+  }, 300 + beforeRows.length * 70 + 180);
+  afterRows.forEach((el, i) => {
+    setTimeout(() => { el.style.transition = 'opacity 400ms'; el.style.opacity = '1'; },
+      550 + beforeRows.length * 70 + i * 75);
+  });
+  setTimeout(() => {
+    document.getElementById('tb' + idx).classList.add('shown');
+  }, 550 + beforeRows.length * 70 + afterRows.length * 75 + 280);
+}
+
+// ═══════════════════════════════════════════════════════
+//  EVENT LISTENERS
+// ═══════════════════════════════════════════════════════
+document.getElementById('narrPlay').addEventListener('click', () => {
+  if (narrating) {
+    stopSpeech();
+  } else {
+    narratePersona(current);
+  }
+});
+
+document.getElementById('narrStop').addEventListener('click', stopSpeech);
+
+document.getElementById('speedPills').addEventListener('click', e => {
+  const pill = e.target.closest('.speed-pill');
+  if (!pill) return;
+  narrRate = parseFloat(pill.dataset.rate);
+  document.querySelectorAll('.speed-pill').forEach(p => p.classList.remove('on'));
+  pill.classList.add('on');
+  // Restart if currently narrating
+  if (narrating) {
+    stopSpeech();
+    setTimeout(() => narratePersona(current), 200);
+  }
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('fb-next').addEventListener('click', () => goTo(current + 1));
+document.getElementById('fb-prev').addEventListener('click', () => goTo(current - 1));
+
+document.querySelectorAll('.nav-pip').forEach(pip => {
+  pip.addEventListener('click', () => goTo(parseInt(pip.dataset.idx)));
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') goTo(current + 1);
+  if (e.key === 'ArrowLeft')  goTo(current - 1);
+  if (e.key === ' ') { e.preventDefault(); narrating ? stopSpeech() : narratePersona(current); }
+  if (e.key === 'Escape') stopSpeech();
+});
+
+// Boot
+animatePanel(0);
+</script>
+</body></html>

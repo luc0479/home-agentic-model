@@ -1,0 +1,25 @@
+<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xml:lang="en-GB">
+  <voice name="en-GB-SoniaNeural">
+    <mstts:silence type="Sentenceboundary-exact" value="200ms"/>
+    <mstts:silence type="Tailing-exact" value="0ms"/>
+    <prosody rate="-2%" pitch="-2%">
+      Marcus Webb manages eighty-five million pounds of annual spend across a hundred and eighty suppliers. On paper it's a strategic role, but his week tells a very different story.
+      <break time="300ms"/>
+      From Monday through to Wednesday he's copying bid data cell by cell out of eight different file formats into a scoring matrix he built three years ago, and he's opening nine browser tabs just to prepare for a single negotiation. He's even redlining an NDA on a forty-five thousand pound deal, which costs more in legal time than the risk it covers and adds two weeks to an already slow onboarding.
+      <break time="300ms"/>
+      He's got eighty negotiations scheduled this year, and he can properly prepare for maybe fifteen of them. And as for that volume rebate buried in the twenty-twenty-two contract, he's fairly sure Centrica has never actually claimed it.
+      <break time="900ms"/>
+      With the new model, Monday morning is just a five-minute read. The Category Watcher brief is already waiting on his screen, with two pricing alerts, a contract flagged for re-tender rather than an automatic renewal, and a supplier showing early signs of financial stress.
+      <break time="300ms"/>
+      The RFx for a twelve million pound professional services renewal was drafted overnight, so Marcus reviews it, makes three adjustments, and it's live in Ariba by half past nine — what used to take three days now takes a single morning.
+      <break time="300ms"/>
+      When the bids come back, every submission, whatever its format, is normalised into one evaluation matrix by the RFx Assistant, with a defensible first-pass score already in place, so Marcus goes straight to evaluation and SME review time drops by seventy to eighty percent.
+      <break time="300ms"/>
+      And for his next negotiation, the Negotiation Buddy already has the brief ready — three years of the supplier's pricing movements, two live market benchmarks, a behavioural profile from past negotiations showing they always anchor high and move on day two, and a recommended walk-away price. Marcus reads it in fifteen minutes, and walks in better prepared than he's ever been.
+      <break time="300ms"/>
+      And that volume rebate? The SRM Agent has been tracking it all year, and now it's claimed automatically, every quarter.
+      <break time="300ms"/>
+      So Marcus goes from properly prepping fifteen negotiations to being genuinely ready for all eighty. The agents run the process, and Marcus drives the value.
+    </prosody>
+  </voice>
+</speak>
